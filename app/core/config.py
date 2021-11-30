@@ -1,20 +1,16 @@
 import os
 
 
+PROJECT_NAME: str = os.getenv("PROJECT_NAME")
 API_V1_STR: str = "/api/v1"
 
-POSTGRES_SERVER: str = os.getenv("POSTGRES_SERVER", "")
-POSTGRES_USER: str = os.getenv("POSTGRES_USER", "")
-POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "")
-POSTGRES_DB: str = os.getenv("POSTGRES_DB", "")
-POSTGRES_PORT: str = os.getenv("POSTGRES_PORT", "")
+DB_HOST: str = os.getenv("DB_HOST", "")
+DB_USER_NAME: str = os.getenv("DB_USER_NAME", "")
+DB_USER_PASSWORD: str = os.getenv("DB_USER_PASSWORD", "")
+DB_NAME: str = os.getenv("DB_NAME", "")
+DB_PORT: str = os.getenv("DB_PORT", "")
 
-PROJECT_NAME = os.getenv("PROJECT_NAME")
 
-SQLALCHEMY_DATABASE_URI = "postgresql://{}:{}@{}:{}/{}".format(
-    POSTGRES_USER,
-    POSTGRES_PASSWORD,
-    POSTGRES_SERVER,
-    POSTGRES_PORT,
-    POSTGRES_DB
+DATABASE_URL = (
+    f'postgresql://{DB_USER_NAME}:{DB_USER_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
 )

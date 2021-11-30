@@ -3,37 +3,23 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-# Shared properties
+# Base schema
 class BeachForecastListBase(BaseModel):
     beach: Optional[str] = None
     region: Optional[str] = None
     ocean: Optional[str] = None
+    beach_id: Optional[int] = None
+    live_info: Optional[dict] = None
+    forecast_info: Optional[dict] = None
 
 
-# Properties to receive on BeachForecastList creation
-class BeachForecastListCreate(BeachForecastListBase):
-    beach: str
-    region: str
-    ocean: str
-    live_info: dict
-    forecast_info: dict
-
-
-# Properties to receive on BeachForecastList update
-class BeachForecastListUpdate(BeachForecastListBase):
-    beach: str
-    region: str
-    ocean: str
-    live_info: dict
-    forecast_info: dict
-
-
-# Properties shared by models stored in DB
+# Schema with DB model 
 class BeachForecastListInDBBase(BeachForecastListBase):
     id: int
     beach: str
     region: str
     ocean: str
+    beach_id: int
     live_info: dict
     forecast_info: dict
 
@@ -41,11 +27,7 @@ class BeachForecastListInDBBase(BeachForecastListBase):
         orm_mode = True
 
 
-# Properties to return to client
+# Response model schema to client
 class BeachForecastList(BeachForecastListInDBBase):
     pass
 
-
-# Properties properties stored in DB
-class BeachForecastListInDB(BeachForecastListInDBBase):
-    pass

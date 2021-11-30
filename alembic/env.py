@@ -1,12 +1,18 @@
-from __future__ import with_statement
+from logging.config import fileConfig
+
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-from sqlalchemy import engine_from_config, pool
-from logging.config import fileConfig
+
+
+from app.db.base import Base
+from app.core import config as settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+section = config.config_ini_section
+config.set_section_option(section, "DATABASE_URL", settings.DATABASE_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -16,10 +22,7 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-# target_metadata = None
-
-from app.db.base import Base  # noqa
-from app.core import config as settings
+from app.models import *
 
 target_metadata = Base.metadata
 
@@ -41,8 +44,13 @@ def run_migrations_offline():
     script output.
 
     """
+    url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=settings.SQLALCHEMY_DATABASE_URI, target_metadata=target_metadata, literal_binds=True, compare_type=True
+        url=url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
+        compare_type=True,
     )
 
     with context.begin_transaction():
@@ -56,17 +64,14 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    configuration = config.get_section(config.config_ini_section)
-    configuration["sqlalchemy.url"] = settings.SQLALCHEMY_DATABASE_URI
-    print(configuration["sqlalchemy.url"])
     connectable = engine_from_config(
-        configuration, prefix="sqlalchemy.", poolclass=pool.NullPool,
+        config.get_section(config.config_ini_section),
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
     )
-    print(configuration["sqlalchemy.url"])
+
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata, compare_type=True
-        )
+        context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
 
         with context.begin_transaction():
             context.run_migrations()
