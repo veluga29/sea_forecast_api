@@ -13,8 +13,8 @@ class BeachForecastListBase(BaseModel):
     forecast_info: Optional[dict] = None
 
 
-# Schema with DB model 
-class BeachForecastListInDBBase(BeachForecastListBase):
+# Response model schema to client
+class BeachForecastList(BeachForecastListBase):
     id: int
     beach: str
     region: str
@@ -25,9 +25,3 @@ class BeachForecastListInDBBase(BeachForecastListBase):
 
     class Config:
         orm_mode = True
-
-
-# Response model schema to client
-class BeachForecastList(BeachForecastListInDBBase):
-    pass
-
